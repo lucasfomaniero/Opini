@@ -10,10 +10,12 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import ReviewForm from './components/ReviewForm';
 import React from 'react';
 import {Root} from 'native-base';
+import ReviewList from './components/ReviewList';
 
 
 const TabNavigator = createBottomTabNavigator({
-    ReviewForm
+    ReviewForm,
+    ReviewList
 });
 
 const AppContainer = createAppContainer(TabNavigator);
