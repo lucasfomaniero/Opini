@@ -1,3 +1,3 @@
 
 export const ADDED_REVIEW = 'ADDED_REVIEW';
-
+export const UPDATED_REVIEW = 'UPDATED_REVIEW';

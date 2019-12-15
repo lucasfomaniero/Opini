@@ -10,12 +10,16 @@ import ReviewForm from './components/ReviewForm';
 import React from 'react';
 import {Root} from 'native-base';
 import ReviewList from './components/ReviewList';
-import {createStore, combineReducers} from 'redux';
+import {createStore, combineReducers, applyMiddleware} from 'redux';
 import reviewsReducers from './reducers/ReviewsReducers';
 import {Provider} from 'react-redux';
+import thunk from 'redux-thunk';
 
 const rootReducer = combineReducers({reviews: reviewsReducers});
-const store = createStore(rootReducer);
+const store = createStore(
+    rootReducer,
+    applyMiddleware(thunk)
+);
 
 const TabNavigator = createBottomTabNavigator({
     ReviewForm,

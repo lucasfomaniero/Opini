@@ -19,6 +19,13 @@ export default {
         const slice = db.slice(0);
         console.log("loading reviews", slice);
         return slice;
+    },
+
+    updateReview: (review, newValues) => {
+        const filter = db.filter(r => r.id === review.id);
+        if (filter[0]) {
+            Object.assign(filter[0], newValues);
+        }
     }
 
 }

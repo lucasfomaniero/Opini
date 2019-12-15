@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import uuid from 'uuid';
-import {FlatList} from 'react-native-gesture-handler';
+import {FlatList, TouchableOpacity, Linking} from 'react-native';
 import {
     Container, Header, Content, Text, Body, Title, Icon, Card, CardItem
 } from 'native-base';
@@ -17,6 +17,14 @@ class ReviewList extends Component {
     constructor(props){
         super(props);
     }
+    openMap(review){
+        const {latitude, longitude} = review;
+        const url = Platform.select({
+            ios: `maps:0,0?q=${latitude}, ${longitude}`,
+            android: `geo:0,0?q=${latitude}, ${longitude}`
+        });
+        Linking.openURL(url)
+    }
 
     _renderItem({item}){
         return(
@@ -31,6 +39,14 @@ class ReviewList extends Component {
                         </Text>
                     </Body>
                 </CardItem>
+                {
+                    item.latitude ?
+                        (<CardItem>
+                            <TouchableOpacity>
+                                <Text note> {item.latitude.toFixed(2)}, {item.longitude.toFixed(2)}</Text>
+                            </TouchableOpacity>
+                        </CardItem>                        ) : null
+                }
             </Card>
         );
     }
