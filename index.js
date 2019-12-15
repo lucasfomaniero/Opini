@@ -2,7 +2,7 @@
  * @format
  */
 
-import {AppRegistry} from 'react-native';
+import {AppRegistry, AsyncStorage} from 'react-native';
 import {name as appName} from './app.json';
 import {createAppContainer} from 'react-navigation';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
@@ -14,12 +14,24 @@ import {createStore, combineReducers, applyMiddleware} from 'redux';
 import reviewsReducers from './reducers/ReviewsReducers';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
+import {persistStore, persistReducer} from 'redux-persist';
+import {PersistGate} from 'redux-persist/lib/integration/react';
+
+const persistConfig = {
+    key: 'reviews',
+    storage: AsyncStorage,
+};
 
 const rootReducer = combineReducers({reviews: reviewsReducers});
+const persistentReducer = persistReducer(persistConfig, rootReducer);
+
 const store = createStore(
-    rootReducer,
-    applyMiddleware(thunk)
+    persistentReducer,
+    applyMiddleware(thunk),
 );
+
+const persistor = persistStore(store);
+
 
 const TabNavigator = createBottomTabNavigator({
     ReviewForm,
@@ -31,9 +43,11 @@ const AppContainer = createAppContainer(TabNavigator);
 const wrappedView = () => {
     return (
         <Provider store={store}>
-            <Root>
-                <AppContainer/>
-            </Root>
+            <PersistGate loading={null} persistor={persistor}>
+                <Root>
+                    <AppContainer/>
+                </Root>
+            </PersistGate>
         </Provider>
     );
 };
