@@ -16,8 +16,11 @@ import {
     Toast,
     Icon,
 } from 'native-base';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {addReview} from '../actions/ReviewActions';
 
-export default class ReviewForm extends Component {
+class ReviewForm extends Component {
     static navigationOptions = {
         tabBarIcon: ({tintColor}) => {
             return (<Icon name="create" style={{color: tintColor}}/>);
@@ -33,14 +36,13 @@ export default class ReviewForm extends Component {
     }
 
     save() {
-        Toast.show({
-            text: `${this.state.title} - ${this.state.description}`,
-        });
-
-        this.setState({
-            title: '',
-            description: '',
-        });
+       const {title, description} = this.state;
+       this.props.addReview({title, description});
+       this.setState({
+           title: '',
+           description: ''
+       });
+       this.props.navigation.navigate('ReviewList');
     };
 
     render() {
@@ -85,3 +87,9 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
 });
+
+const mapsDispatchToProps = (dispatch) => {
+    return bindActionCreators({addReview}, dispatch);
+};
+
+export default connect(null, mapsDispatchToProps)(ReviewForm);
