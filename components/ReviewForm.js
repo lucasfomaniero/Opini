@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, Image} from 'react-native';
+import {StyleSheet, Image, Platform} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import {
     Container,
@@ -21,6 +21,8 @@ import {
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {addReview} from '../actions/ReviewActions';
+import RNFetchBlob from 'rn-fetch-blob';
+import uuid from 'uuid';
 
 class ReviewForm extends Component {
     static navigationOptions = {
@@ -59,14 +61,35 @@ class ReviewForm extends Component {
     }
 
     save() {
-       this.props.addReview(this.state);
-       this.setState({
-           title: '',
-           description: '',
-           imageUri: ''
-       });
-       this.props.navigation.navigate('ReviewList');
+
+        const {title, description} = this.state;
+
+        if (this.state.imageUri) {
+            let filePath = this.state.imageUri;
+            if (Platform.OS === 'ios') {
+                filePath = filePath.replace('file://', '')
+            }
+
+            const imageUri = RNFetchBlob.fs.dirs.DocumentDir +'/' + uuid() + '.jpg';
+            console.log(imageUri);
+            RNFetchBlob.fs.cp(filePath, imageUri).then(() => {
+                this.props.addReview({title, description, imageUri: `file://${imageUri}`})
+                this.postSave()
+            })
+        } else {
+            this.props.addReview({title, description});
+            this.postSave();
+        }
     };
+
+    postSave() {
+        this.setState({
+            title: '',
+            description: '',
+            imageUri: ''
+        });
+        this.props.navigation.navigate('ReviewList');
+    }
 
     render() {
         return (
