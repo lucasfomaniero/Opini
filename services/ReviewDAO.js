@@ -9,8 +9,8 @@ const db = [
 export default {
     addReview: (review) => {
         console.log('adding review', review);
-        const {title, description} = review;
-        const entity = {id: uuid(), title, description};
+        const {title, description, imageUri} = review;
+        const entity = {id: uuid(), title, description, imageUri};
         db.push(entity);
         return entity;
     },

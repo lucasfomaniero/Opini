@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Image} from 'react-native';
+import ImagePicker from 'react-native-image-picker';
 import {
     Container,
     Header,
@@ -15,6 +16,7 @@ import {
     Title,
     Toast,
     Icon,
+    Right
 } from 'native-base';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -32,7 +34,28 @@ class ReviewForm extends Component {
         this.state = {
             title: '',
             description: '',
+            imageUri: ''
         };
+    }
+
+    addImage(){
+        const options = {
+            title: 'Escolha uma imagem'
+        };
+        ImagePicker.showImagePicker(options, (resp) =>{
+            this.setState({imageUri: resp.uri})
+        })
+    }
+
+    drawImage(){
+        if (this.state.imageUri) {
+            return(<Image
+                style={{marginTop: 20, height: 300, width: null}}
+                source={{uri: this.state.imageUri}}
+            />);
+        } else {
+            return null;
+        }
     }
 
     save() {
@@ -40,7 +63,8 @@ class ReviewForm extends Component {
        this.props.addReview({title, description});
        this.setState({
            title: '',
-           description: ''
+           description: '',
+           imageUri: ''
        });
        this.props.navigation.navigate('ReviewList');
     };
@@ -54,6 +78,12 @@ class ReviewForm extends Component {
                             Nova Opinião
                         </Title>
                     </Body>
+                    <Right>
+                        <Button transparent onPress={() => this.addImage()
+                        }>
+                            <Icon name="camera"/>
+                        </Button>
+                    </Right>
                 </Header>
                 <Content padder>
                     <Form>
@@ -72,6 +102,7 @@ class ReviewForm extends Component {
                             />
                         </Item>
                     </Form>
+                    {this.drawImage()}
                     <Button block style={styles.saveButton} onPress={() => this.save()}>
                         <Text>Salvar</Text>
                     </Button>
