@@ -59,8 +59,7 @@ class ReviewForm extends Component {
     }
 
     save() {
-       const {title, description} = this.state;
-       this.props.addReview({title, description});
+       this.props.addReview(this.state);
        this.setState({
            title: '',
            description: '',

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import uuid from 'uuid';
-import {FlatList, TouchableOpacity, Linking} from 'react-native';
+import {FlatList, TouchableOpacity, Linking, Image} from 'react-native';
 import {
     Container, Header, Content, Text, Body, Title, Icon, Card, CardItem
 } from 'native-base';
@@ -25,13 +25,27 @@ class ReviewList extends Component {
         });
         Linking.openURL(url)
     }
-
-    _renderItem({item}){
+    _renderImage(item) {
+        if (item.imageUri) {
+            return (
+                <CardItem cardBody>
+                    <Image
+                        source={{uri: item.imageUri}}
+                        style={{height: 200, width: null, flex: 1}}
+                    />
+                </CardItem>
+            );
+        } else {
+            return null;
+        }
+    }
+    _renderItem(item){
         return(
             <Card>
                 <CardItem header>
                     <Text>{item.title}</Text>
                 </CardItem>
+                {this._renderImage(item)}
                 <CardItem>
                     <Body>
                         <Text>
@@ -39,14 +53,12 @@ class ReviewList extends Component {
                         </Text>
                     </Body>
                 </CardItem>
-                {
-                    item.latitude ?
+                { item.latitude ?
                         (<CardItem>
-                            <TouchableOpacity>
+                            <TouchableOpacity onPress={() => this.openMap(item)}>
                                 <Text note> {item.latitude.toFixed(2)}, {item.longitude.toFixed(2)}</Text>
                             </TouchableOpacity>
-                        </CardItem>                        ) : null
-                }
+                        </CardItem>      ) : null}
             </Card>
         );
     }
@@ -61,8 +73,10 @@ class ReviewList extends Component {
                 </Header>
                     <FlatList
                         data={this.props.reviews}
+                        getItemCount={this.props.reviews.size}
                         keyExtractor={(review) => review.id}
-                        renderItem={(item) => this._renderItem(item)} />
+                        renderItem={({item}) => this._renderItem(item)}
+                    />
 
             </Container>
         );
@@ -70,8 +84,8 @@ class ReviewList extends Component {
 
 };
 
-const mapsStatetoProps = ({reviews}) => {
+const mapsStateToProps = ({reviews}) => {
     return {reviews};
 };
 
-export default connect(mapsStatetoProps)(ReviewList);
+export default connect(mapsStateToProps)(ReviewList);
